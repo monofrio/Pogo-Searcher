@@ -6,28 +6,41 @@
     <title>Pokemon Go Search Tool</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 <body>
-
-<script>
-
-</script>
 <script>
     const data = [
         {
+            "id" : "0",
             "name" : "12 Candy",
             "title" : "12 Candy Evolve Pokemon",
-            "value": "Caterpie, Weedle, Pidgey, Wurmple, Whismwur, Pidove",
+            "value": "",
+            "pokemon": "Caterpie, Weedle, Pidgey, Wurmple, Whismwur, Pidove",
+            "search": "",
             "tag": "12candy",
             "info": "Pokemons that cost only 12 candies to evolve can help in 2X-xp on evolving pokemons and Field Research."
         },
         {
+            "id": "1",
             "name": "Purify",
-            "title":"",
-            "value": "Shadow&weedle,rattata,geodude,ducklett,zubat,foongus",
+            "title":"1000 Stardust Purify",
+            "value": "Shadow",
+            "pokemon": "weedle, rattata, geodude, ducklett, zubat, foongus",
+            "search": "",
             "tag": "purify",
-
-        }
+            "info": ""
+        },
+        {
+            "id": "2",
+            "name": "Free Evolve",
+            "title":"Free Evolve when traded",
+            "value": "haunter, karrablast, machoke, phantump, pumpkaboo, Shelmet, Boldore, Graveler, Gurdurr, Kadabra",
+            "pokemon": "haunter, karrablast, machoke, phantump, pumpkaboo, Shelmet, Boldore, Graveler, Gurdurr, Kadabra",
+            "search": "!favorite & !shadow & !shiny & !4* & !lucky & !traded & !free-evol",
+            "tag": "free-evol",
+            "info": ""
+        },
     ];
-
+</script>
+<script>
     function findNew(id){
         let output = data[id]['value']  + " & !" + data[id]['tag'];
         copyContent(output);
@@ -59,50 +72,94 @@
 
 </script>
 <div class="container">
-    <header><h1>For those auto-catcher days!</h1></header>
-    <div class="row">
-        <div class="col">
-            <ul class="list-group">
-                <li class="list-group-item">
-                <div class="row" >
+    <div id="app"></div>
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <!-- Babel Script -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script type="text/jsx">
+        const app = document.getElementById('app');
 
-                    <div class="col">
-                        <h4>12 Candy Evolve Pokemon <button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">more info</button></br>
-                            <small class="text-body-secondary h6">Tag: 12candy</small>
-                        </h4>
-                        <span>Caterpie, Weedle, Pidgey, Wurmple, Whismwur, Pidove</span>
-                    </div>
+        const title = "Pokemon Go Search Tool"
 
-                    <div class="col">
-                        <div class="d-flex p-2">
-                            <button class="btn btn-dark btn" onclick="copyTag(0)">Copy Tag Name</button>
-                            <button class="btn btn-danger btn-lg" onclick="findNew(0)">Pokemon List</button>
-                            <button class="btn btn-primary btn-lg" onclick="hideFvorite(0)">Hide: Fav, Tag</button>
+        function Header(){
+            return <h1>{title}</h1>
+        }
 
-                        </div>
-                    </div>
+        function List(){
+            return(
+                    <ul className="list-group">
+                        {data.map( (val) => (
+                            <li className={'list-group-item'} key={val.name}>
+                                <div className={"row"} >
+                                    <div className={"col"}>
+                                        <h4>{val.title} &nbsp;
+                                            <button type="button" className={"btn btn-outline-info btn-sm"} data-bs-toggle={"modal"} data-bs-target={"#" + "Modal" + val.id }>more info</button> <br/>
+                                            <small className={"text-body-secondary h6"}>Tag: {val.tag}</small>
+                                        </h4>
+                                    </div>
+                                    <div className="col">
+                                        <div className={"d-flex p-2"}>
+                                            <button className={"btn btn-dark btn"} onClick={ () => copyTag(val.id) } >Copy Tag Name</button> &nbsp;
+                                            <button className={"btn btn-danger btn-lg"} onClick={() => findNew(val.id) }>Pokemon List</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="modal fade" id={"Modal" + val.id} tabIndex="-1" aria-labelledby={val.id + "ModalLabel"} aria-hidden="true">
+                                    <div className="modal-dialog">
+                                        <div className="modal-content">
+                                            <div className="modal-header">
+                                                <h1 className="modal-title fs-5" id="exampleModalLabel">{val.title}</h1>
+                                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div className="modal-body">
+                                                { (val.info === "")? <p>No Information at this time</p> : <p>{val.info}</p> }
 
+                                            </div>
+                                            <div className="modal-footer">
+                                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+            )
+        }
+
+        function SearchOptions(){
+            return (
+                <div className="btn-group" role="group" aria-label="Basic checkbox toggle button group">
+                    <input type="checkbox" className="btn-check" id="btncheck1" autoComplete="off" />
+                    <label className="btn btn-outline-primary" htmlFor="btncheck1">Hide Favorite</label>
+
+                    <input type="checkbox" className="btn-check" id="btncheck2" autoComplete="off" />
+                    <label className="btn btn-outline-primary" htmlFor="btncheck2">Checkbox 2</label>
+
+                    <input type="checkbox" className="btn-check" id="btncheck3" autoComplete="off" />
+                    <label className="btn btn-outline-primary" htmlFor="btncheck3">Checkbox 3</label>
                 </div>
-                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="exampleModalLabel">12 Candies to Evolve</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <p>Pokemons that cost only 12 candies to evolve can help in 2X-xp on evolving pokemons and Field Research</p>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            </div>
-                        </div>
-                    </div>
+            )
+        }
+
+        function HomePage(){
+            const [likes, setLikes] = React.useState(0);
+
+
+            return(
+                <div>
+                    <header> <Header /> </header>
+                    <section> <SearchOptions /> </section>
+                    <section> <List /> </section>
                 </div>
-            </li>
-            </ul>
-        </div>
-    </div>
+            )
+        }
+
+        ReactDOM.render( <HomePage />, app);
+    </script>
+
+
 </div>
 
 
